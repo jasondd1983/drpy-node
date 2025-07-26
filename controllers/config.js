@@ -632,5 +632,106 @@ export default (fastify, options, done) => {
         }
     });
 
+    // 接口：返回配置 JSON
+    fastify.get('/tbox*', {preHandler: [validatePwd, validateBasicAuth]}, async (request, reply) => {
+        let t1 = (new Date()).getTime();
+        const query = request.query; // 获取 query 参数
+        const pwd = query.pwd || '';
+        const sub_code = query.sub || '';
+        const cfg_path = request.params['*']; // 捕获整个路径
+        try {
+            // 获取主机名，协议及端口
+            const protocol = request.headers['x-forwarded-proto'] || (request.socket.encrypted ? 'https' : 'http');  // http 或 https
+            const hostname = request.hostname;  // 主机名，不包含端口
+            const port = request.socket.localPort;  // 获取当前服务的端口
+            console.log(`cfg_path:${cfg_path},port:${port}`);
+            let not_local = cfg_path.startsWith('/1') || cfg_path.startsWith('/index');
+            let requestHost = not_local ? `${protocol}://${hostname}` : `http://127.0.0.1:${options.PORT}`; // 动态生成根地址
+           let requestUrl = not_local ? `${protocol}://${hostname}${request.url}` : `http://127.0.0.1:${options.PORT}${request.url}`; // 动态生成请求链接
+            const handleJavaScript = (cfgPath, requestUrl, options, reply) => {
+                if (cfgPath.includes('tbox.js')) {
+                    let content = Buffer.from('Y29uc3Qgd2ViU2l0ZSA9ICcnOw0KDQphc3luYyBmdW5jdGlvbiBjYXRlZ29yeUNvbnRlbnQodGlkLCBwZyA9IDEsIGV4dGVuZCkgew0KICBjb25zdCBiYWNrRGF0YSA9IG5ldyBSZXBWaWRlbygpOw0KICB0cnkgew0KICAgIGZ1bmN0aW9uIGVuY29kZUJhc2U2NChpbnB1dCkgew0KICAgICAgY29uc3Qgd29yZEFycmF5ID0gQ3J5cHRvLmVuYy5VdGY4LnBhcnNlKGlucHV0KTsNCiAgICAgIGNvbnN0IGJhc2U2NCA9IENyeXB0by5lbmMuQmFzZTY0LnN0cmluZ2lmeSh3b3JkQXJyYXkpOw0KICAgICAgcmV0dXJuIGJhc2U2NDsNCiAgICB9DQogICAgY29uc3Qgc2VwYXJhdG9yID0gd2ViU2l0ZS5pbmNsdWRlcygnPycpID8gJyYnIDogJz8nOw0KICAgIGxldCB1cmwgPSBgJHt3ZWJTaXRlfSR7c2VwYXJhdG9yfWFjPWRldGFpbCZ0PSR7ZW5jb2RlVVJJQ29tcG9uZW50KHRpZCl9JnBnPSR7cGd9YDsNCiAgICBpZiAoZXh0ZW5kKSB7DQogICAgICB1cmwgKz0gYCZleHQ9JHtlbmNvZGVVUklDb21wb25lbnQoZW5jb2RlQmFzZTY0KGV4dGVuZCkpfWA7DQogICAgfQ0KICAgIGNvbnNvbGUubG9nKHVybCk7DQogICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCByZXEodXJsKTsNCiAgICBjb25zdCByZXNEYXRhID0gYXdhaXQgcmVzcG9uc2UuanNvbigpOw0KICAgIGlmIChyZXNEYXRhPy5saXN0KSBiYWNrRGF0YS5saXN0ID0gcmVzRGF0YS5saXN0Ow0KICB9IGNhdGNoIChlcnJvcikgew0KICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGluIGNhdGVnb3J5Q29udGVudDonLCBlcnJvcik7DQogICAgYmFja0RhdGEubXNnID0gZXJyb3IubWVzc2FnZTsNCiAgICBhd2FpdCB0b2FzdChg6I635Y+W5YiG57G75pWw5o2u5aSx6LSl77yaJHtiYWNrRGF0YS5tc2d9YCwzKTsNCiAgfQ0KICBjb25zb2xlLmxvZyhKU09OLnN0cmluZ2lmeShiYWNrRGF0YSkpOw0KICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoYmFja0RhdGEpOw0KfQ0KDQoNCg0KDQphc3luYyBmdW5jdGlvbiBkZXRhaWxDb250ZW50KGlkcykgew0KICBjb25zdCBiYWNrRGF0YSA9IG5ldyBSZXBWaWRlbygpOw0KICB0cnkgew0KICAgIGNvbnN0IHNlcGFyYXRvciA9IHdlYlNpdGUuaW5jbHVkZXMoJz8nKSA/ICcmJyA6ICc/JzsNCiAgICBjb25zdCB1cmwgPSBgJHt3ZWJTaXRlfSR7c2VwYXJhdG9yfWFjPWRldGFpbCZpZHM9JHtlbmNvZGVVUklDb21wb25lbnQoaWRzKX1gOw0KICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgcmVxKHVybCk7DQogICAgY29uc3QgcmVzcG9uc2VEYXRhID0gYXdhaXQgcmVzcG9uc2UudGV4dCgpOw0KICAgIGNvbnNvbGUubG9nKHJlc3BvbnNlRGF0YSk7DQogICAgcmV0dXJuIHJlc3BvbnNlRGF0YTsNCiAgfSBjYXRjaCAoZXJyb3IpIHsNCiAgICBjb25zb2xlLmVycm9yKCdFcnJvciBpbiBkZXRhaWxDb250ZW50OicsIGVycm9yKTsNCiAgICBiYWNrRGF0YS5tc2cgPSBlcnJvci5tZXNzYWdlIHx8IGVycm9yLnN0YXR1c1RleHQgfHwgJ1Vua25vd24gZXJyb3InOw0KICAgIGF3YWl0IHRvYXN0KGDojrflj5bor6bmg4XlpLHotKXvvJoke2JhY2tEYXRhLm1zZ31gLDMpOw0KICB9DQogIGNvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KGJhY2tEYXRhKSk7DQogIHJldHVybiBKU09OLnN0cmluZ2lmeShiYWNrRGF0YSk7DQp9DQoNCg0KDQphc3luYyBmdW5jdGlvbiBob21lQ29udGVudCgpIHsNCiAgY29uc3QgYmFja0RhdGEgPSBuZXcgUmVwVmlkZW8oKTsNCiAgdHJ5IHsNCiAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IHJlcSh3ZWJTaXRlKTsNCiAgICBjb25zdCByZXNEYXRhID0gYXdhaXQgcmVzcG9uc2UuanNvbigpOw0KICAgIGlmIChyZXNEYXRhPy5jbGFzcykgYmFja0RhdGEuY2xhc3MgPSByZXNEYXRhLmNsYXNzOw0KICAgIGlmIChyZXNEYXRhPy5maWx0ZXJzKSBiYWNrRGF0YS5maWx0ZXJzID0gcmVzRGF0YS5maWx0ZXJzOw0KICAgIGlmIChyZXNEYXRhPy5saXN0KSBiYWNrRGF0YS5saXN0ID0gcmVzRGF0YS5saXN0Ow0KICB9IGNhdGNoIChlcnJvcikgew0KICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGluIGhvbWVDb250ZW50OicsIGVycm9yKTsNCiAgICBiYWNrRGF0YS5tc2cgPSBlcnJvci5zdGF0dXNUZXh0IHx8IGVycm9yLm1lc3NhZ2UgfHwgJ1Vua25vd24gZXJyb3InOw0KICAgIGF3YWl0IHRvYXN0KGDliqDovb3pppbpobXlpLHotKXvvJoke2JhY2tEYXRhLm1zZ31gLDMpOw0KICB9DQogIGNvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KGJhY2tEYXRhKSk7DQogIHJldHVybiBKU09OLnN0cmluZ2lmeShiYWNrRGF0YSk7DQp9DQoNCg0KDQoNCmFzeW5jIGZ1bmN0aW9uIHNlYXJjaENvbnRlbnQoa2V5d29yZCkgew0KICBjb25zdCBiYWNrRGF0YSA9IG5ldyBSZXBWaWRlbygpOw0KICB0cnkgew0KICAgIGNvbnN0IHNlcGFyYXRvciA9IHdlYlNpdGUuaW5jbHVkZXMoJz8nKSA/ICcmJyA6ICc/JzsNCiAgICBjb25zdCB1cmwgPSBgJHt3ZWJTaXRlfSR7c2VwYXJhdG9yfXdkPSR7ZW5jb2RlVVJJQ29tcG9uZW50KGtleXdvcmQpfSZwZz0xYDsNCiAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IHJlcSh1cmwpOw0KICAgIGNvbnN0IHByb0RhdGEgPSBhd2FpdCByZXNwb25zZS5qc29uKCk7DQogICAgaWYgKHByb0RhdGE/Lmxpc3QpIGJhY2tEYXRhLmxpc3QgPSBwcm9EYXRhLmxpc3Q7DQogIH0gY2F0Y2ggKGVycm9yKSB7DQogICAgY29uc29sZS5lcnJvcignRXJyb3IgaW4gc2VhcmNoQ29udGVudDonLCBlcnJvcik7DQogICAgYmFja0RhdGEubXNnID0gZXJyb3Iuc3RhdHVzVGV4dCB8fCBlcnJvci5tZXNzYWdlIHx8ICdVbmtub3duIGVycm9yJzsNCiAgfQ0KICBjb25zb2xlLmxvZyhKU09OLnN0cmluZ2lmeShiYWNrRGF0YSkpOw0KICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoYmFja0RhdGEpOw0KfQ0KDQoNCg0KDQphc3luYyBmdW5jdGlvbiBwbGF5ZXJDb250ZW50KHZvZF9pZCwgZmxhZykgew0KICBjb25zdCBiYWNrRGF0YSA9IG5ldyBSZXBWaWRlb1BsYXlVcmwoKTsNCiAgdHJ5IHsNCiAgICBjb25zdCBzZXBhcmF0b3IgPSB3ZWJTaXRlLmluY2x1ZGVzKCc/JykgPyAnJicgOiAnPyc7DQogICAgY29uc3QgdXJsID0gYCR7d2ViU2l0ZX0ke3NlcGFyYXRvcn1mbGFnPSR7ZW5jb2RlVVJJQ29tcG9uZW50KGZsYWcpfSZwbGF5PSR7ZW5jb2RlVVJJQ29tcG9uZW50KHZvZF9pZCl9YDsNCiAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IHJlcSh1cmwpOw0KICAgIGNvbnN0IHByb0RhdGEgPSBhd2FpdCByZXNwb25zZS5qc29uKCk7DQogICAgYmFja0RhdGEuaGVhZGVyID0gaGVhZGVyc1RvU3RyaW5nKHByb0RhdGEuaGVhZGVyIHx8IHt9KTsNCiAgICAvLyDlpITnkIYg6YGT6ZW/55qEdXJsDQogICAgaWYgKEFycmF5LmlzQXJyYXkocHJvRGF0YS51cmwpKSB7DQogICAgICBsZXQgc2VsZWN0ZWRVcmwgPSAnJzsNCiAgICAgIC8vIOafpeaJvuaYr+WQpuWMheWQqyAi5Y6f55S7Ig0KICAgICAgY29uc3Qgb3JpZ2luYWxJbmRleCA9IHByb0RhdGEudXJsLmluZGV4T2YoJ+WOn+eUuycpOw0KICAgICAgaWYgKG9yaWdpbmFsSW5kZXggIT09IC0xICYmIG9yaWdpbmFsSW5kZXggKyAxIDwgcHJvRGF0YS51cmwubGVuZ3RoKSB7DQogICAgICAgIC8vIOWmguaenOWMheWQqyAi5Y6f55S7Iu+8jOWPliAi5Y6f55S7IiDlkI7pnaLnmoQgVVJMDQogICAgICAgIHNlbGVjdGVkVXJsID0gcHJvRGF0YS51cmxbb3JpZ2luYWxJbmRleCArIDFdOw0KICAgICAgfSBlbHNlIHsNCiAgICAgICAgLy8g5aaC5p6c5LiN5YyF5ZCrICLljp/nlLsi77yM5LuO5LiK5b6A5LiL5om+5Yiw56ys5LiA5LiqIGh0dHAg5byA5aS055qEIFVSTA0KICAgICAgICBmb3IgKGxldCBpID0gMDsgaSA8IHByb0RhdGEudXJsLmxlbmd0aDsgaSsrKSB7DQogICAgICAgICAgaWYgKHR5cGVvZiBwcm9EYXRhLnVybFtpXSA9PT0gJ3N0cmluZycgJiYgcHJvRGF0YS51cmxbaV0uc3RhcnRzV2l0aCgnaHR0cCcpKSB7DQogICAgICAgICAgICBzZWxlY3RlZFVybCA9IHByb0RhdGEudXJsW2ldOw0KICAgICAgICAgICAgYnJlYWs7DQogICAgICAgICAgfQ0KICAgICAgICB9DQogICAgICB9DQogICAgICBiYWNrRGF0YS51cmwgPSBzZWxlY3RlZFVybDsNCiAgICB9IGVsc2Ugew0KICAgICAgYmFja0RhdGEudXJsID0gcHJvRGF0YS51cmw7IC8vIOWmguaenOS4jeaYr+aVsOe7hO+8jOebtOaOpeWPliBVUkwNCiAgICB9DQogICAgYmFja0RhdGEucGFyc2UgPSBwcm9EYXRhLnBhcnNlID09PSAxID8gMCA6IHByb0RhdGEucGFyc2UgPT09IDAgPyAxIDogMTsNCiAgfSBjYXRjaCAoZXJyb3IpIHsNCiAgICBjb25zb2xlLmVycm9yKCdFcnJvciBpbiBwbGF5ZXJDb250ZW50OicsIGVycm9yKTsNCiAgICBiYWNrRGF0YS51cmwgPSAnJzsgDQogICAgYmFja0RhdGEucGFyc2UgPSAxOw0KICAgIGJhY2tEYXRhLm1zZyA9IGVycm9yLm1lc3NhZ2UgfHwgJ1Vua25vd24gZXJyb3InOyANCiAgICBhd2FpdCB0b2FzdChg6Kej5p6Q5pKt5pS+6ZO+5o6l5aSx6LSl77yaJHtiYWNrRGF0YS5tc2d9YCwgMyk7DQogIH0NCiAgY29uc29sZS5sb2coSlNPTi5zdHJpbmdpZnkoYmFja0RhdGEpKTsNCiAgcmV0dXJuIEpTT04uc3RyaW5naWZ5KGJhY2tEYXRhKTsNCn0NCg==', 'base64').toString('utf-8');
+                        return reply.type('text/javascript; charset=utf-8').send(content);
+                }
+            };
+            if (cfg_path.endsWith('.js')) {
+                return handleJavaScript(cfg_path, requestUrl, options, reply);
+            }
+            let sub = null;
+            if (sub_code) {
+                let subs = getSubs(options.subFilePath);
+                sub = subs.find(it => it.code === sub_code);
+                // console.log('sub:', sub);
+                if (sub && sub.status === 0) {
+                    return reply.status(500).send({error: `此订阅码:【${sub_code}】已禁用`});
+                }
+            }
+            const siteJSON = await generateSiteJSON(options, requestHost, sub, pwd);
+            const parseJSON = await generateParseJSON(options.jxDir, requestHost);
+            const livesJSON = generateLivesJSON(requestHost);
+            const playerJSON = generatePlayerJSON(options.configDir, requestHost);
+            const configObj = {sites_count: siteJSON.sites.length, ...playerJSON, ...siteJSON, ...parseJSON, ...livesJSON};
+            if (!configObj.spider) {
+                configObj.spider = playerJSON.spider
+            }
+            // console.log(configObj);
+            const filteredSites = configObj.sites
+                .filter(site => site.type === 4 && !site.name.includes('[书]')) // 过滤掉 type 为 4 且 name 不包含 [书] 的站点
+                .map(site => ({
+                    key: md5(site.key),
+                    name: site.name,
+                    type: 5,
+                    searchable: site.searchable === 1 || site.searchable === 2 ? 1 : 0,
+                    filterClass: "",
+                    firstClass: "",
+                    filterPlay: "",
+                    firstPlay: "",
+                    ext: requestHost + "/tbox/tbox.js", 
+                    flagable: site.name.includes('[官]') ? 1 : 0,
+                    filterPlayFileKeywords: "",
+                    keepPlayFileKeywords: "",
+                    webSite: site.api
+                }));
+            let flags = [];
+            const transformedParses = configObj.parses.map(parse => {
+                // 如果 parse.ext.flag 为空，则将 parse.name 添加到 flag 中
+                const flag = parse.ext?.flag || [];
+                if (flag.length === 0) {
+                    flag.push(parse.name);
+                }
+                // 将 flag 数组中的值遍历并添加到 flags 中，同时去重
+                flag.forEach(f => {
+                    if (!flags.includes(f)) {
+                        flags.push(f);
+                    }
+                });
+                return {
+                    name: parse.name, 
+                    type: parse.type >= 1 ? 1 : 0, 
+                    url: parse.url, 
+                    ext: {
+                        flag: flag,
+                        header: parse.header || {} 
+                    }
+                };
+            });
+            const result = {
+                sites: filteredSites, 
+                parses: transformedParses, 
+                flags: flags 
+            };
+            const configStr = JSON.stringify(result, null, 2);
+            if (!process.env.VERCEL) { 
+                writeFileSync(options.indexFilePath, configStr, 'utf8'); 
+                if (cfg_path === '/1') {
+                    writeFileSync(options.customFilePath, configStr, 'utf8'); 
+                }
+            }
+            return reply.type('application/json').send(configStr);
+        } catch (error) {
+            reply.status(500).send({error: 'Failed to generate site JSON', details: error.message});
+        }
+    });
+    
     done();
 };
