@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 0,
+  filterable: 0,
+  quickSearch: 0,
+  title: '雷鲸小站[盘]',
+  lang: 'ds'
+})
+*/
+
 const {req_, req_proxy} = $.require('./_lib.request.js')
 const {
     formatPlayUrl,

@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '老白故事[听]',
+  lang: 'ds'
+})
+*/
+
 const {
     randDeviceWithId,
     formatPlayUrl,

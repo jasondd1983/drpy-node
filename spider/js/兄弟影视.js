@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: '兄弟影视',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '影视', //影视|听书|漫画|小说
     title: '兄弟影视',

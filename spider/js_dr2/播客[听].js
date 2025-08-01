@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 0,
+  filterable: 0,
+  quickSearch: 0,
+  title: '播客[听]',
+  lang: 'dr2'
+})
+*/
+
 var rule = {
     类型: '听书',
     title: '播客[听]',

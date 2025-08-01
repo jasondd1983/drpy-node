@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 1,
+  filterable: 1,
+  quickSearch: 0,
+  title: 'MP4电影',
+  lang: 'ds'
+})
+*/
+
 // http://localhost:5757/api/MP4电影[磁]?ac=list&t=分类&pg=1&ext=eyJ0eXBlIjoiMSJ9
 // http://localhost:5757/api/MP4电影[磁]?ac=list&t=1&pg=1&ext=eyJ0eXBlIjoiMSJ9
 // http://localhost:5757/api/MP4电影[磁]?ac=detail&ids=/detail/9278.html

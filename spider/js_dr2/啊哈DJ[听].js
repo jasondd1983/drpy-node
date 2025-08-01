@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: '啊哈DJ[听]',
+  lang: 'dr2'
+})
+*/
+
 var rule = {
     title: '啊哈DJ[听]',
     host: 'https://m.ahadj.com',

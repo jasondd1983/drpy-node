@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: '大象影视',
+  lang: 'ds'
+})
+*/
+
 class Rule {
     类型 = '影视';
     title = '大象影视';

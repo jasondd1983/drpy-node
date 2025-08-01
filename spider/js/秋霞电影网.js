@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '秋霞电影网',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '影视',
     title: '秋霞电影网',

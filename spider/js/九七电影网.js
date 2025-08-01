@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: '九七电影网',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '影视',
     title: '九七电影网',

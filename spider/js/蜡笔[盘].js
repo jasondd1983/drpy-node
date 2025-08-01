@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 1,
+  filterable: 1,
+  quickSearch: 0,
+  title: '蜡笔[盘]',
+  lang: 'ds'
+})
+*/
+
 const {getHtml} = $.require('./_lib.request.js')
 const {
     formatPlayUrl,

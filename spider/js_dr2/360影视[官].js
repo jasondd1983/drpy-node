@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '360影视[官]',
+  lang: 'dr2'
+})
+*/
+
 var rule = {
     title: '360影视[官]',
     host: 'https://www.360kan.com',

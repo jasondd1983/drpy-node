@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '虎牙直播[官]',
+  lang: 'dr2'
+})
+*/
+
 var rule = {
     title: '虎牙直播[官]',
     host: 'https://www.huya.com',

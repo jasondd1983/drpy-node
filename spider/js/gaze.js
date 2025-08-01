@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: 'GAZE',
+  lang: 'ds'
+})
+*/
+
 globalThis.window = globalThis.global = globalThis;
 
 class Go {

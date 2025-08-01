@@ -1,11 +1,12 @@
 # drpyS(drpy-node)
 
 nodejs作为服务端的drpy实现。全面升级异步写法  
-~~积极开发中，每日一更~~，当前进度 `55%`  
-找工作中，随缘更新
+~~积极开发中，每日一更~~，当前进度 `63%`  
+~~找工作中，随缘更新~~  
+上班当牛马，下班要带娃，阶段性佛系趁娃睡觉熬夜更新
 
-* [本地配置接口-动态本地](/config?pwd=)
-* [本地配置接口-动态外网/局域网](/config/1?pwd=)
+* [本地配置接口-动态本地](/config?pwd=$pwd)
+* [本地配置接口-动态外网/局域网](/config/1?pwd=$pwd)
 * [其他配置接口-订阅过滤](/docs/sub.md)
 * [代码加解密工具](/admin/encoder)
 * [V我50支付凭证生成器](/authcoder?len=10&number=1)
@@ -15,9 +16,28 @@ nodejs作为服务端的drpy实现。全面升级异步写法
 * [本站防止爬虫协议](/robots.txt)
 * [本项目主页-免翻](https://git-proxy.playdreamer.cn/hjdhnx/drpy-node)
 * [DS源适配猫影视](https://github.com/hjdhnx/CatPawOpen/tree/ds-cat)
+* [drpy2打包项目](https://github.com/hjdhnx/drpy-webpack)
 * [在线猫ds源主页](/cat/index.html)
 
 ## 更新记录
+
+### 20250801
+
+更新至V1.2.4
+
+### 20250729
+
+更新至V1.2.3
+
+### 20250728
+
+更新至V1.2.2
+
+### 20250727
+
+更新至V1.2.1
+
+全新版本，大堆特性，性能优化，稳定性增强。
 
 ### 20250726
 
@@ -65,6 +85,8 @@ todo:
 ## 问题说明
 
 1. windows上直接运行index.js可能会发现运行过程中的日志打印出中文乱码。建议通过yarn dev运行或者在package.json里点击dev脚本运行
+2. `pinyin` 库依赖的 `nodejieba` 跑路了现在无法完成安装
+3. `new Promise` 里发生的错误无法被外部try catch 导致程序崩溃，如 `番薯动漫.js` 里的写法
 
 ## 安装说明
 

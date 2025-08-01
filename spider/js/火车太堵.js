@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 1,
+  filterable: 0,
+  quickSearch: 0,
+  title: '火车太堵',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '影视',
     title: '火车太堵',

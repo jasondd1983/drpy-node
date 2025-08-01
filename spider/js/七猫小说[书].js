@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '七猫小说[书]',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '小说', //影视|听书|漫画|小说
     title: '七猫小说[书]',

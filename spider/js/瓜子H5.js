@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '瓜子H5',
+  lang: 'ds'
+})
+*/
+
 // http://localhost:5757/api/瓜子H5?ac=list&t=1&pg=1
 // http://localhost:5757/api/瓜子H5?ac=detail&ids=447
 // http://localhost:5757/api/瓜子H5?wd=&pg=1

@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 1,
+  filterable: 1,
+  quickSearch: 0,
+  title: '播剧',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '影视',
     title: '播剧',

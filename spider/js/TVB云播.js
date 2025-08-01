@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 2,
+  title: 'TVB云播',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     title: 'TVB云播',
     类型: '影视',

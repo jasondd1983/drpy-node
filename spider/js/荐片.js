@@ -2,8 +2,14 @@
  * 影视TV 超連結跳轉支持
  * https://t.me/fongmi_offical/
  * https://github.com/FongMi/Release/tree/main/apk
- */
-var rule = {
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '荐片',
+  lang: 'ds'
+})
+*/var rule = {
     title: '荐片',
     // host: 'http://api2.rinhome.com',
     //host: 'https://oiuzy.haitu33.com',

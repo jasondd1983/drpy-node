@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 0,
+  filterable: 0,
+  quickSearch: 0,
+  title: 'iptv',
+  lang: 'ds'
+})
+*/
+
 var rule = {
     类型: '代理',
     title: 'iptv',

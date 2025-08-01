@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 0,
+  quickSearch: 0,
+  title: 'ikanbot',
+  lang: 'ds'
+})
+*/
+
 // http://localhost:5757/api/ikanbot?ac=list&t=1&pg=1
 // http://localhost:5757/api/ikanbot?ac=detail&ids=447
 // http://localhost:5757/api/ikanbot?wd=&pg=1

@@ -1,3 +1,13 @@
+/*
+@header({
+  searchable: 2,
+  filterable: 1,
+  quickSearch: 0,
+  title: '相声随身听[听]',
+  lang: 'dr2'
+})
+*/
+
 var rule = {
     title: '相声随身听[听]',
     host: 'https://www.xsmp3.com',
