@@ -4,6 +4,7 @@
   filterable: 0,
   quickSearch: 0,
   title: '设置中心',
+  isProxyPath: true,
   logo: 'https://avatars.githubusercontent.com/u/49803097?v=4',
   more: {
     sourceTag: '设置,动作',
@@ -65,6 +66,7 @@ let quick_data = {
     阿里: 'https://www.alipan.com/s/vgXMcowK8pQ',
     天翼: 'https://cloud.189.cn/web/share?code=INJbU3NbqyUj',
     百度: 'https://pan.baidu.com/s/1L0UIv4p0X0QrbbKErJuc_w?pwd=2pwj',
+    迅雷: 'https://pan.xunlei.com/s/VOkBwLBNoXN8eO9WrcVbXdTcA1?pwd=8tvj#',
     移动1: 'https://yun.139.com/shareweb/#/w/i/0i5CLQ7BpV7Ai',
     移动2: 'https://caiyun.139.com/m/i?2jexC1gcjeN7q',
     移动3: 'https://yun.139.com/shareweb/#/w/i/2i2MoE9ZHn9p1',
@@ -72,6 +74,7 @@ let quick_data = {
     直链1: 'https://vdse.bdstatic.com//628ca08719cef5987ea2ae3c6f0d2386.mp4',
     嗅探1: 'https://www.6080kk.cc/haokanplay/178120-1-1.html',
     嗅探2: 'https://www.hahads.com/play/537106-3-1.html',
+    央视跨源: 'cctv://3c18e2b3bba249b78b831e910608cfec',
     多集: 'https://v.qq.com/x/cover/m441e3rjq9kwpsc/m00253deqqo.html@https://pan.quark.cn/s/6c8158e258f3@https://pan.baidu.com/s/1TdbgcwaMG1dK7B5pQ1LbBg?pwd=1234',
     海阔二级单线路: gzip(JSON.stringify({
         "actor": "剧集",
@@ -121,11 +124,12 @@ var rule = {
     类型: '设置',
     title: '设置中心',
     推荐: async function () {
-        let {publicUrl} = this;
+        let {publicUrl, requestHost} = this;
         // log('publicUrl:', publicUrl);
         let setIcon = urljoin(publicUrl, './images/icon_cookie/设置.png');
         let searchIcon = urljoin(publicUrl, './images/icon_cookie/搜索.jpg');
         let chatIcon = urljoin(publicUrl, './images/icon_cookie/chat.webp');
+        let drpySIcon = urljoin(publicUrl, './images/drpys.png');
         const data = deepCopy(action_data);
         data.push({
             vod_id: JSON.stringify({
@@ -140,6 +144,18 @@ var rule = {
             vod_name: '源内搜索',
             vod_pic: searchIcon,
             vod_tag: 'action',
+        });
+        data.unshift({
+            vod_id: JSON.stringify({
+                actionId: 'browser',
+                type: 'browser',
+                title: '后台管理',
+                url: requestHost + '/apps/admin',
+                header: {'Authorization': 'Basic YWRtaW46ZHJweXM='},
+            }),
+            vod_name: '后台管理',
+            vod_pic: drpySIcon,
+            vod_tag: 'action'
         });
         data.forEach(it => {
             if (!it.vod_pic) {
@@ -481,8 +497,7 @@ var rule = {
                 vod_name: '测试代理流',
                 vod_play_from: 'drpyS本地流代理',
                 // vod_play_url: '测试播放流$' + getProxyUrl().split('?')[0] + media_url + '#不代理直接播$' + media_url + '#8k播放$' + m3u8_url,
-                // vod_play_url: '测试播放流$' + getProxyUrl().split('?')[0] + media_url + '#不代理直接播$' + media_url
-                vod_play_url: '测试播放流$' + getProxyUrl() + '&url=' + media_url + '#不代理直接播$' + media_url
+                vod_play_url: '测试播放流$' + getProxyUrl().split('?')[0] + media_url + '#不代理直接播$' + media_url
             }
         }
     },
@@ -491,16 +506,15 @@ var rule = {
         let {input} = this;
         return {parse: 0, url: input}
     },
-    proxy_rule: async function (params) {
+    proxy_rule: async function () {
         let {input, proxyPath} = this;
-        const url = proxyPath || params.url;
+        const url = proxyPath;
         log('start proxy:', url);
         try {
             const headers = {
                 'user-agent': PC_UA,
             }
-            // return [200, null, url, headers, 2]
-            return [302, null, '', {location: url}]
+            return [200, null, url, headers, 2]
         } catch (e) {
             log('proxy error:', e.message);
             return [500, 'text/plain', e.message]

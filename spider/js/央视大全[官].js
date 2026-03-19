@@ -4,11 +4,32 @@
   filterable: 1,
   quickSearch: 0,
   title: '央视大全',
-  lang: 'ds'
+  lang: 'ds',
+  isProxyPath: true,
+  more: {
+      parseApi: [
+        {
+            host: 'cctv://(.+)',
+            flag: 'CCTV'
+        },
+        {
+            host: 'cctv4k://(.+)',
+            flag: 'CCTV4K'
+        },
+        {
+            host: 'cctvlive://(.+)',
+            flag: 'CCTV直播'
+        },
+      ]
+  },
+
 })
 */
 
-const {processFile, indexHtml} = $.require('./_lib.cntv.js');
+// const {processFile, indexHtml} = $.require('./_lib.cntv.js');
+const {parseCCTVUrl, detectInputType, getVideoInfoByPid} = require('./_lib.cntv-urlparse.cjs');
+const {processFile} = require('./_lib.cntv2026.cjs');
+const {indexHtml} = $.require('./_lib.cntv.js');
 const {setH5Str} = $.require('./_lib.cntv.live.js');
 var rule = {
     title: '央视大全',
@@ -31,7 +52,7 @@ var rule = {
     play_parse: true,
     lazy: async function () {
         let {input, flag, getProxyUrl} = this;
-        // log(input);
+        log(input);
         // log(flag);
         let guid = '';
         let url = '';
@@ -251,9 +272,10 @@ var rule = {
         let url = '';
         let is_live = 0;
         if (proxyPath) {
-            const BASE_URL = 'https://dh5.cntv.qcloudcdn.com/'.rstrip('/');
+            // const BASE_URL = 'https://dh5.cntv.qcloudcdn.com/'.rstrip('/');
             // const BASE_URL = 'https://dh5.cntv.myalicdn.com/'.rstrip('/');
-            url = `${BASE_URL}/${proxyPath}`;
+            // url = `${BASE_URL}/${proxyPath}`;
+            url = proxyPath;
         } else {
             url = base64Decode(input.split('#')[0]);
             is_live = 1;
@@ -284,6 +306,7 @@ var rule = {
                 return [200, 'application/vnd.apple.mpegurl', m3u8Str]
             }
             const contentType = extension === '.ts' ? 'video/MP2T' : 'application/vnd.apple.mpegurl';
+            // log('url:', url);
             const buffer = await processFile(url, extension);
             const headers = {
                 'Content-Disposition': `attachment; filename="${filename}"`,
@@ -472,6 +495,13 @@ function getRegexText(text, regexText, index) {
 }
 
 async function getM3u8(pid, getProxyUrl) {
+    const info = await getVideoInfoByPid(pid);
+    const proxy_path = info.download_url;
+    log('[getM3u8] proxy_path:', proxy_path);
+    return getProxyUrl().split('?')[0].rstrip('/') + '/' + proxy_path;
+}
+
+async function getM3u8Old(pid, getProxyUrl) {
     const url = `https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do?pid=${pid}`;
     const htmlTxt = await request(url);
     const jo = JSON.parse(htmlTxt);

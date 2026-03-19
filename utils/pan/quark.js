@@ -17,7 +17,7 @@
  * @since 1.0.0
  */
 
-import req from '../req.js';
+import {reqs} from '../req.js';
 import {ENV} from '../env.js';
 import COOKIE from '../cookieManager.js';
 import CryptoJS from "crypto-js";
@@ -143,16 +143,16 @@ class QuarkHandler {
      * @returns {Promise<void>}
      */
     async initQuark() {
-        if (this.token) {
-            let exp = JSON.parse(CryptoJS.enc.Base64.parse(this.token.split('.')[1]).toString(CryptoJS.enc.Utf8))
-            let now = Math.floor(Date.now() / 1000)
-            if (exp.exp < now) {
-                console.log('登录状态已过期,重新登录,请及时更换Token')
-            } else {
-                console.log('登录成功，继续使用,可使用时间截止到：' + (new Date(exp.exp * 1000)).toLocaleString())
-                console.log('QuarkTV token获取成功：' + this.token)
-            }
-        }
+        // if(this.token){
+        //     let exp = JSON.parse(CryptoJS.enc.Base64.parse(this.token.split('.')[1]).toString(CryptoJS.enc.Utf8))
+        //     let now = Math.floor(Date.now() / 1000)
+        //     if (exp.exp < now) {
+        //         console.log('登录状态已过期,重新登录,请及时更换Token')
+        //     } else {
+        //         console.log('登录成功，继续使用,可使用时间截止到：' + (new Date(exp.exp * 1000)).toLocaleString())
+        //         console.log('QuarkTV token获取成功：' + this.token)
+        //     }
+        // }
         if (this.cookie) {
             console.log("cookie 获取成功");
         } else {
@@ -335,12 +335,12 @@ class QuarkHandler {
         let link = `${this.apiUrl}/${url}`
         // 发送请求 - 根据方法类型选择GET或POST请求
         const resp =
-            method === 'get' ? await req.get(link, {
+            method === 'get' ? await reqs.get(link, {
                 headers: headers,
             }).catch((err) => {
                 console.error(err.message);
                 return err.response || {status: 500, data: {}};
-            }) : await req.post(link, data, {
+            }) : await reqs.post(link, data, {
                 headers: headers,
             }).catch((err) => {
                 console.error(err.message);
@@ -650,7 +650,6 @@ class QuarkHandler {
         const resCookie = cookieResDataSelf['set-cookie'];
         if (!resCookie) {
             console.log(`${from}自动更新夸克 cookie: 没返回新的cookie`);
-
             return
         }
         const cookieObject = COOKIE.parse(resCookie);
@@ -719,40 +718,43 @@ class QuarkHandler {
         return CryptoJS.SHA256(data).toString();
     }
 
-    async refreshToken() {
-        let data = JSON.stringify({
-            "req_id": reqId,
-            "app_ver": this.conf.appVer,
-            "device_id": deviceID,
-            "device_brand": "OPPO",
-            "platform": "tv",
-            "device_name": "PCRT00",
-            "device_model": "PCRT00",
-            "build_device": "aosp",
-            "build_product": "PCRT00",
-            "device_gpu": "Adreno%20(TM)%20640",
-            "activity_rect": "%7B%7D",
-            "channel": this.conf.channel,
-            "refresh_token": this.token
-        });
-        let config = {
-            method: 'POST',
-            url: 'http://api.extscreen.com/quarkdrive',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; PCRT00 Build/N2G47O) AppleWebKit/533.1 (KHTML, like Gecko) Mobile Safari/533.1',
-                'Connection': 'Keep-Alive',
-                'Accept-Encoding': 'gzip',
-                'Content-Type': 'application/json',
-                'Cookie': 'sl-session=VIaxTAKF8mdJBhU2uda0zA=='
-            },
-            data: data
-        };
-        let req = await axios.request(config);
-        if (req.status === 200) {
-            ENV.set('uc_token_cookie', req.data.data.refresh_token)
-            return await this.getDownload(shareId, stoken, fileId, fileToken, clean)
-        }
-    }
+    // async refreshToken(shareId, stoken, fileId, fileToken, clean){
+    //     const timestamp = Math.floor(Date.now() / 1000).toString() + '000'; // 13位时间戳需调整
+    //     const deviceID = this.Addition.DeviceID || this.generateDeviceID(timestamp);
+    //     const reqId = this.generateReqId(deviceID, timestamp);
+    //     let data = JSON.stringify({
+    //         "req_id": reqId,
+    //         "app_ver": this.conf.appVer,
+    //         "device_id": deviceID,
+    //         "device_brand": "OPPO",
+    //         "platform": "tv",
+    //         "device_name": "PCRT00",
+    //         "device_model": "PCRT00",
+    //         "build_device": "aosp",
+    //         "build_product": "PCRT00",
+    //         "device_gpu": "Adreno%20(TM)%20640",
+    //         "activity_rect": "%7B%7D",
+    //         "channel": this.conf.channel,
+    //         "refresh_token": this.token
+    //     });
+    //     let config = {
+    //         method: 'POST',
+    //         url: 'http://api.extscreen.com/quarkdrive',
+    //         headers: {
+    //             'User-Agent': 'Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; PCRT00 Build/N2G47O) AppleWebKit/533.1 (KHTML, like Gecko) Mobile Safari/533.1',
+    //             'Connection': 'Keep-Alive',
+    //             'Accept-Encoding': 'gzip',
+    //             'Content-Type': 'application/json',
+    //             'Cookie': 'sl-session=VIaxTAKF8mdJBhU2uda0zA=='
+    //         },
+    //         data: data
+    //     };
+    //     let req = await axios.request(config);
+    //     if(req.status === 200) {
+    //         ENV.set('quark_token_cookie',req.data.data.refresh_token)
+    //         return await this.getDownload(shareId, stoken, fileId, fileToken, clean)
+    //     }
+    // }
 
     async getDownload(shareId, stoken, fileId, fileToken, clean) {
         await this.initQuark()
@@ -1000,10 +1002,83 @@ class QuarkHandler {
 
     }
 
+    async getToken() {
+        let t = Math.floor(new Date().getTime() / 1e3)
+
+        let data = JSON.stringify({
+            "conversation_id": "300000" + t,
+            "conversation_type": 3,
+            "msg_id": t + "000"
+        });
+
+        let config = {
+            method: 'POST',
+            url: 'https://drive-social-api.quark.cn/1/clouddrive/chat/conv/file/acquire_dl_token?pr=ucpro&fr=pc&sys=darwin&ve=3.19',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/3.23.2 Chrome/112.0.5615.165 Electron/24.1.3.8 Safari/537.36 Channel/pckk_other_ch',
+                'Connection': 'keep-alive',
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Content-Type': 'application/json',
+                'accept-language': 'zh-CN',
+                'origin': 'https://pan.quark.cn',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'cross-site',
+                'sec-ch-ua': '"Not:A-Brand";v="99", "Chromium";v="112"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
+                'referer': 'https://pan.quark.cn/',
+                'Cookie': this.cookie
+            },
+            data: data
+        };
+        let html = await axios.request(config)
+        if (html.status === 200) {
+            return html.data.data.token
+        }
+    }
+
+    //伪造token实现无限不转存
+    async getUrl(shareId, stoken, fileId, fileToken) {
+        await this.initQuark()
+        let token = await this.getToken()
+        let data = JSON.stringify({
+            "fids": [fileId],
+            "fids_token": [fileToken],
+            "pwd_id": shareId,
+            "stoken": stoken,
+            "speedup_session": "",
+            "token": token
+        });
+        let config = {
+            method: 'POST',
+            url: 'https://drive-pc.quark.cn/1/clouddrive/file/download?pr=ucpro&fr=pc',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/3.20.0 Chrome/112.0.5615.165 Electron/24.1.3.8 Safari/537.36 Channel/pckk_other_ch',
+                'Connection': 'keep-alive',
+                'Accept': '*/*,application/json;charset=utf-8',
+                'Accept-Encoding': 'gzip, deflate, br, zstd',
+                'Content-Type': 'application/json',
+                'Cookie': this.cookie
+            },
+            data: data
+        };
+        let html = await axios.request(config).catch(e => e)
+        if (html.status === 200) {
+            return html.data.data.map(it => {
+                return {
+                    name: it.video_max_resolution,
+                    url: it.download_url
+                }
+            })
+        }
+    }
+
 
     async testSupport(url, headers) {
 
-        const resp = await req
+        const resp = await reqs
 
             .get(url, {
 
@@ -1236,7 +1311,7 @@ class QuarkHandler {
 
                             console.log(inReq.id, chunkIdx);
 
-                            const dlResp = await req.get(url, {
+                            const dlResp = await reqs.get(url, {
 
                                 responseType: 'stream',
 
