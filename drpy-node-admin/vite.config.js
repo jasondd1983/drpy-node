@@ -40,6 +40,15 @@ export default defineConfig(({ command, mode }) => {
         // 所有 API 请求代理到 drpy-node
         '/api': {
           target: 'http://localhost:5757',
+          changeOrigin: true,
+          ws: true
+        },
+        '/encoder': {
+          target: 'http://localhost:5757',
+          changeOrigin: true
+        },
+        '/decoder': {
+          target: 'http://localhost:5757',
           changeOrigin: true
         },
         // WebSocket 代理
