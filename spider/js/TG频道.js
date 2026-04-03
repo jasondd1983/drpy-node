@@ -90,10 +90,10 @@ const rule = {
   类型: '影视',
   title: 'TG频道',
   author: 'EylinSir',
-  host: 'https://t.me',
+  host: 'https://tgsou.5868788.xyz',
   url: '/s/fyclass',
   searchUrl: '?q=**',
-  Pan_API: 'https://pancheck.banye.tech:7777',  // 网盘链接有效性检测过滤api，需自行替换
+  Pan_API: 'http://sbb.20240211.xyz:6080',  // 网盘链接有效性检测过滤api，需自行替换
   logo: 'https://api.xinac.net/icon/?url=https://t.me',
   searchable: 1,
   quickSearch: 1,
