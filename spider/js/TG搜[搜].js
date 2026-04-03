@@ -10,9 +10,9 @@
 })
 */
 
-const Pan_API = 'https://pancheck.banye.tech:7777';  // 网盘链接有效性检测过滤api，需自行替换
+const Pan_API = 'http://sbb.20240211.xyz:6080';  // 网盘链接有效性检测过滤api，需自行替换
 const Pan_Sift = [];
-const DEFAULT_CHANNELS = 'douerpan,bdwpzhpd,wydwpzy,sgkwpzy,zyywpzy,Baidu_Netdisk,PanjClub,youxigs,yunpanuc,zyfb123,ysxb48,xiangnikanj';//定义频道
+const DEFAULT_CHANNELS = 'douerpan,bdwpzhpd,wydwpzy,sgkwpzy,zyywpzy,Baidu_Netdisk,PanjClub,youxigs,yunpanuc,zyfb123,ysxb48,xiangnikanj,tgsearchers5,SharePanBaidu,taoxgzy,peccxinpd,bdbdndn11,jdjdn1111,tgwpzy,txtyzy,baicaoZY,djfxkk,tyysypzypd,Lsp115,yunpan189,QukanMovie,vip115hot,SharePanFilms,QuarkFree,ydyp888,bdwpzhpd,movielover8888_TV,ddzyk001,ddyun123,ddyun189,ddyun139,yunpan139,yunpan189,yp123pan,yunpansall,yunpanqk,ResourceUniverse,yunpanuc,zyfb123,zyzhpd123,xx123pan,Q66Share,alyp_TV,ydypzyfx,hao115,guaguale115,XiangxiuNB,yunpanpan,kuakeyun,zaihuayun,Quark_Movies,alyp_4K_Movies,yunpanshare,ucwangpan,Quark_Share_Channel,Aliyundrive_Share_Channel,shareAliyun,ikiviyyp,wanwansubchat,wangpanziyuan2021,alyp_1,quanziyuanshe,BaiduCloudDisk,alyp_JLP,alyp_Animation,wp123zy,Channel_Shares_115,tgsearchers115,Maidanglaocom,oneonefivewpfx,hdhhd21,cloudtianyi,tianyirigeng,tyypzhpd,ucquark,NewQuark,Oscar_4Kmovies,ucwpzy,XiangxiuNBB,NewAliPan,MCPH086,MCPH01,kkxlzy,PanjClub,xingqiump4,tianyifc,yunpanxunlei,gotopan,yggpan,leoziyuan,Aliyun_4K_Movies,kuakeclound,guoman4K';//定义频道
 const DEFAULT_SOURCES = ['百度网盘', '夸克网盘', 'UC网盘', '移动云盘', '天翼云盘', '115网盘', '阿里云盘', '123云盘'];//定义搜索网盘类型及顺序
 const diskMapping = [
     { name: '阿里云盘', domain: ['alipan', 'aliyundrive'], regex: /ali(?:yundrive|pan)\.com/ },
